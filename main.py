@@ -16,12 +16,16 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from selenium.common.exceptions import NoSuchElementException
 
-if check_schedule() == 0:
+# デバッグ用か
+DEBUG = True
+debug_list = [259, 260, 261]
+
+if utils.check_schedule_within_30_minutes() == 0:
   print("毎月第2水曜22:30～翌8:00,毎週金曜3:00～3:30は利用できません。")
   exit(0)
 
 DATA_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-original = pd.read_excel(os.path.join(DATA_BASE, "埼玉県営テニスコート名義.xlsx"), usecols="A:D", header=1)
+df = pd.read_excel(os.path.join(DATA_BASE, "埼玉県営テニスコート名義.xlsx"), usecols="A:D", header=1)
 
 # 個人で利用する目的などで利用不可能な通し番号
 unused = [31,]
@@ -110,11 +114,15 @@ df = df.dropna()
 
 for index, row in tqdm(df.iterrows()):
   # 各番号についての利用可否確認
-  
+
+  # デバッグ時はdebug_list内の番号のみ
+  if DEBUG == True:
+    if row["通し番号"] not in debug_list:
+      availability.append(0)
+      continue
   # 利用不可能な番号はスキップ
   if row["通し番号"] in unused:
     availability.append(0)
-  
   # 番号が利用できるかチェック
   else:
     userid = row["ID"]
@@ -124,9 +132,10 @@ for index, row in tqdm(df.iterrows()):
   print(f"  userid: {userid}, password: {password}, 利用可否: {availability[-1]}")
 
 df["利用可否(1:可, 0:不可)"] = availability
+available_df = df[df["利用可否(1:可, 0:不可)"] == 1]
 
-# 作成したdataframeの保存
-current_date = date.today().strftime("%y-%m-%d-%h-%m-%s")
+作成したdataframeの保存
+current_date = date.today().strftime("%m/%d")
 
-file_path = os.path.join(DATA_BASE, f'所沢名義_{current_date}.xlsx')
-df.to_excel(file_path, index=False)
+file_path = os.path.join(DATA_BASE, f'[自動生成{current_date}]-埼玉県営利用可名義.xlsx')
+utils.save_to_excel(available_df, file_path)
