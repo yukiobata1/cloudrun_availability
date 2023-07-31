@@ -138,5 +138,5 @@ available_df = df[df["利用可否(1:可, 0:不可)"] == 1]
 # 作成したdataframeの保存
 current_date = date.today().strftime("%m/%d")
 
-file_path = os.path.join(DATA_BASE, f'[自動生成{current_date}]-埼玉県営利用可名義.xlsx')
+file_path = os.path.join(DATA_BASE, f'{current_date}埼玉県営利用可名義.xlsx')
 utils.save_to_excel(available_df, file_path)
