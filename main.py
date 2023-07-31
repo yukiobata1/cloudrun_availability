@@ -24,7 +24,7 @@ DATA_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 original = pd.read_excel(os.path.join(DATA_BASE, "埼玉県営テニスコート名義.xlsx"), usecols="A:D", header=1)
 
 # 個人で利用する目的などで利用不可能な通し番号
-unused = [31, 259]
+unused = [31,]
 
 options = Options()
 options.add_argument('--headless')
@@ -48,9 +48,14 @@ def check_available(userid: str, password: str, driver) -> int:
   
   ok_button = driver.find_element(By.XPATH, "//input[contains(@value,'ＯＫ')]")
   ok_button.click()
-  
+
+  try:
+    ID_password_unmatch = driver.find_element(By.XPATH, "//form[contains(text(),'ＩＤ又はパスワードに誤りがあります')]")
+    return 0
+  except NoSuchElementException:
+    pass
+
   # 所在地
-  
   select_by_place = driver.find_element(By.XPATH, "//a[text()='所在地から検索／予約']")
   select_by_place.click()
   
@@ -73,7 +78,6 @@ def check_available(userid: str, password: str, driver) -> int:
   try:
     driver.find_element(By.XPATH, "//form[contains(text(),  '利用者の有効期限が切れています')]")
     return 0
-    sys.exit()
   except NoSuchElementException:
     pass
   
