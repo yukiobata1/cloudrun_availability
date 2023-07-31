@@ -111,6 +111,7 @@ def check_available(userid: str, password: str, driver) -> int:
     
 # 空の行を除去
 df = df.dropna()
+availability = []
 
 for index, row in tqdm(df.iterrows()):
   # 各番号についての利用可否確認
