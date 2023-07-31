@@ -17,7 +17,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException
 
 # デバッグ用か
-DEBUG = True
+DEBUG = False
 debug_list = [259, 260, 261]
 
 if utils.check_schedule_within_30_minutes() == 1:
