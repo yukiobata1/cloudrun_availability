@@ -44,8 +44,7 @@ def save_to_excel(df, file_name):
     ws.cell(row=total_rows, column=2, value=len(df)*4)
 
     # Save the Excel file
-    print(f'{file_name=}')
-    wb.save(file_name.split(".")[1])
+    wb.save(file_name)
 
 
 def check_schedule_within_30_minutes():
